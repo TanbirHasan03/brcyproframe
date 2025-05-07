@@ -1,55 +1,62 @@
-document.getElementById("upload").addEventListener("change", function (e) {
-  const file = e.target.files[0];
+const uploadInput = document.getElementById("upload");
+const previewImage = document.getElementById("preview");
+const warning = document.getElementById("warning");
+const downloadBtn = document.getElementById("download");
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+let frameImage = new Image();
+frameImage.src = "RCYBOGURA.png";
+
+uploadInput.addEventListener("change", function () {
+  const file = this.files[0];
   if (!file) return;
 
-  const img = new Image();
   const reader = new FileReader();
-
-  reader.onload = function (event) {
+  reader.onload = function (e) {
+    const img = new Image();
     img.onload = function () {
-      // Check if image is 1:1 ratio
+      // Check aspect ratio
       if (img.width !== img.height) {
-        alert("Please upload a square (1:1 ratio) image.");
+        warning.style.display = "block";
+        previewImage.src = "";
+        downloadBtn.style.display = "none";
         return;
       }
 
-      const canvas = document.createElement("canvas");
+      warning.style.display = "none";
       canvas.width = img.width;
       canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
 
-      // Draw user's image first
-      ctx.drawImage(img, 0, 0, img.width, img.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // Load frame image
-      const frame = new Image();
-      frame.onload = function () {
-        // Draw frame image on top
-        ctx.drawImage(frame, 0, 0, img.width, img.height);
-
-        // Enable download button
-        const downloadBtn = document.getElementById("download");
-        downloadBtn.disabled = false;
-
-        // Set download functionality
-        downloadBtn.onclick = function () {
-          const link = document.createElement("a");
-          link.download = "profile_with_frame.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        };
+      frameImage.onload = () => {
+        ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
+        previewImage.src = canvas.toDataURL("image/png");
+        downloadBtn.style.display = "inline-block";
       };
 
-      frame.onerror = function () {
-        alert("❌ Failed to load frame image. Make sure 'RCYBOGURA.png' is in the same directory.");
-        console.error("Frame image failed to load.");
-      };
-
-      frame.src = "RCYBOGURA.png"; // your frame image name
+      // In case frame is already loaded
+      if (frameImage.complete) {
+        ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
+        previewImage.src = canvas.toDataURL("image/png");
+        downloadBtn.style.display = "inline-block";
+      }
     };
-
-    img.src = event.target.result;
+    img.src = e.target.result;
   };
-
   reader.readAsDataURL(file);
 });
+
+downloadBtn.onclick = function () {
+  canvas.toBlob(function (blob) {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "profile_with_frame.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }, "image/png");
+};
