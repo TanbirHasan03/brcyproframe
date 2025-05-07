@@ -5,8 +5,11 @@ const downloadBtn = document.getElementById("download");
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
-let frameImage = new Image();
+const frameImage = new Image();
 frameImage.src = "RCYBOGURA.png";
+frameImage.crossOrigin = "anonymous";
+
+let userImage = new Image();
 
 uploadInput.addEventListener("change", function () {
   const file = this.files[0];
@@ -14,10 +17,10 @@ uploadInput.addEventListener("change", function () {
 
   const reader = new FileReader();
   reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
-      // Check aspect ratio
-      if (img.width !== img.height) {
+    userImage = new Image();
+    userImage.onload = function () {
+      // Check if image is square
+      if (userImage.width !== userImage.height) {
         warning.style.display = "block";
         previewImage.src = "";
         downloadBtn.style.display = "none";
@@ -25,29 +28,30 @@ uploadInput.addEventListener("change", function () {
       }
 
       warning.style.display = "none";
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = userImage.width;
+      canvas.height = userImage.height;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      frameImage.onload = () => {
-        ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
-        previewImage.src = canvas.toDataURL("image/png");
-        downloadBtn.style.display = "inline-block";
-      };
-
-      // In case frame is already loaded
-      if (frameImage.complete) {
-        ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
-        previewImage.src = canvas.toDataURL("image/png");
-        downloadBtn.style.display = "inline-block";
+      // Wait for frame to fully load before drawing
+      if (!frameImage.complete) {
+        frameImage.onload = () => drawFinalImage();
+      } else {
+        drawFinalImage();
       }
     };
-    img.src = e.target.result;
+    userImage.src = e.target.result;
   };
   reader.readAsDataURL(file);
 });
+
+function drawFinalImage() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(userImage, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
+
+  // Show preview and download button
+  previewImage.src = canvas.toDataURL("image/png");
+  downloadBtn.style.display = "inline-block";
+}
 
 downloadBtn.onclick = function () {
   canvas.toBlob(function (blob) {
