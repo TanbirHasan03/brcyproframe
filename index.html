@@ -4,26 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BRCY Profile Maker</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #warning {
+      color: red;
+      display: none;
+      margin-top: 10px;
+    }
+    #preview {
+      margin-top: 20px;
+      max-width: 300px;
+      max-height: 300px;
+      border: 1px solid #ddd;
+    }
+    #download {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #e91e63, #9c27b0);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 12px;
+      text-align: center;
+    }
+    #help {
+      margin-top: 20px;
+      color: #007bff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Add frame with your profile</h1>
-  </header>
+  <h1>Add frame with your profile</h1>
+  <input type="file" id="upload" accept="image/*" />
+  <p id="warning">Please upload a square (1:1 ratio) image.</p>
+  <img id="preview" src="" alt="Preview" />
+  <button id="download">Download Framed Image</button>
+  <p id="help" onclick="window.open('https://www.facebook.com/TanbirHasan30', '_blank')">Having issues? Click here</p>
+  <footer>©Red Crescent Youth, Bogura<br/>Developed by: Tanbir Hasan</footer>
 
-  <main>
-    <p class="note">* Please upload a 1:1 ratio (square) profile photo.</p>
-    <input type="file" id="upload" accept="image/*"/>
-    <button id="downloadBtn">Download Framed Image</button>
-    <p id="warning"></p>
-    <a href="https://www.facebook.com/TanbirHasan30" class="report">Having an issue? Contact us</a>
-  </main>
-
-  <footer>
-    <p>©Red Crescent Youth, Bogura | Developed by: Tanbir Hasan</p>
-  </footer>
-
-  <canvas id="canvas" style="display:none;"></canvas>
   <script src="script.js"></script>
 </body>
 </html>
