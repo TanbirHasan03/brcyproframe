@@ -151,7 +151,138 @@
   <p id="warning"> ⚠️⚠️⚠️ Your photo is not prfect for Frame. Please upload a square (1:1 ratio) image.</p>
   <img id="preview" src="" />
   <button id="download">Download Framed Image</button>
-  <p id="help" onclick="window.open('https://www.facebook.com/TanbirHasan30', '_blank')">Having issues? Click here</p>
+
+
+	  <!-- START: IVD Note + Hashtags (self-contained; paste into <body>) -->
+<div id="ivd-frame-widget" aria-live="polite" style="max-width:760px;margin:18px auto;padding:18px;border-radius:12px;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;">
+  <style>
+    /* Scoped styles (only affect elements inside #ivd-frame-widget) */
+    #ivd-frame-widget { color: #111; }
+    #ivd-frame-widget .ivd-card { background: transparent; padding:12px; border-radius:10px; }
+    #ivd-frame-widget .ivd-note { display:flex; gap:12px; align-items:flex-start; }
+    #ivd-frame-widget .ivd-pin { font-size:20px; line-height:1; margin-top:2px; }
+    #ivd-frame-widget .ivd-content { flex:1; }
+    #ivd-frame-widget .ivd-title { font-weight:700; margin:0 0 8px 0; font-size:15px; }
+    #ivd-frame-widget .ivd-list { margin:0; padding-left:18px; color:#222; font-size:14px; line-height:1.45; }
+    #ivd-frame-widget .ivd-list li { margin:8px 0; }
+    #ivd-frame-widget .ivd-codebox { margin-top:12px; position:relative; border-radius:10px; padding:12px; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; font-size:14px; background:#f6f6f6; border:1px solid rgba(0,0,0,0.06); color:#111; white-space:pre-wrap; word-break:break-word; }
+    #ivd-frame-widget .ivd-copy-btn { position:absolute; right:10px; top:10px; padding:6px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; font-weight:600; font-size:13px; }
+    #ivd-frame-widget .ivd-chips { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+    #ivd-frame-widget .ivd-chip { padding:6px 10px; background:#fff; border-radius:999px; border:1px solid rgba(0,0,0,0.06); cursor:pointer; font-size:13px; }
+    #ivd-frame-widget .ivd-small { margin-top:8px; font-size:13px; color:#333; }
+    /* Responsive small screens */
+    @media (max-width:420px){
+      #ivd-frame-widget { padding:12px; }
+      #ivd-frame-widget .ivd-title { font-size:14px; }
+      #ivd-frame-widget .ivd-copy-btn { top:8px; right:8px; padding:5px 8px; font-size:12px; }
+    }
+  </style>
+
+  <div class="ivd-card" role="region" aria-label="Important instructions and hashtags">
+    <div class="ivd-note">
+      <div class="ivd-pin">📌</div>
+      <div class="ivd-content">
+        <div class="ivd-title">Important Instructions for Frame Upload</div>
+        <ol class="ivd-list">
+          <li><strong>Crop</strong> your profile photo to a <strong>1:1 ratio (1000×1000 px)</strong> for best fit.</li>
+          <li><strong>Upload</strong> your cropped photo using the upload option on the page.</li>
+          <li>Please <strong>wait 2–3 seconds</strong> while the frame is applied.</li>
+          <li><strong>Preview</strong> the final image and then <strong>download</strong> it.</li>
+          <li>Set it as your <strong>Facebook profile picture</strong> and use the official hashtag.</li>
+        </ol>
+
+        <div class="ivd-codebox" id="ivd-codebox">
+#IVD25
+#IVD25_RCY_BOGURA
+#rcybogura
+          <button type="button" class="ivd-copy-btn" id="ivd-copy-all" aria-label="Copy all hashtags">Copy</button>
+        </div>
+
+        <div class="ivd-chips" aria-hidden="false" style="">
+          <button type="button" class="ivd-chip" data-line="0">Copy 1st</button>
+          <button type="button" class="ivd-chip" data-line="1">Copy 2nd</button>
+          <button type="button" class="ivd-chip" data-line="2">Copy 3rd</button>
+        </div>
+
+        <div class="ivd-small">Tip: Use the <strong>Copy</strong> button to copy all hashtags at once or the small buttons to copy a single line.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Scoped lookups inside the widget to avoid interfering with page globals
+      const widget = document.getElementById('ivd-frame-widget');
+      if(!widget) return;
+      const box = widget.querySelector('#ivd-codebox');
+      const copyAllBtn = widget.querySelector('#ivd-copy-all');
+      const chips = widget.querySelectorAll('.ivd-chip');
+
+      function getLines(){
+        // get text lines from codebox (exclude button text)
+        const cloned = box.cloneNode(true);
+        // remove the button if cloned
+        const btn = cloned.querySelector('.ivd-copy-btn');
+        if(btn) btn.remove();
+        const text = cloned.textContent || cloned.innerText || '';
+        return text.split('\\n').map(s => s.trim()).filter(Boolean);
+      }
+
+      async function copyText(text){
+        try{
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            await navigator.clipboard.writeText(text);
+            return true;
+          } else {
+            // fallback
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly','');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            return ok;
+          }
+        }catch(e){
+          return false;
+        }
+      }
+
+      if(copyAllBtn){
+        copyAllBtn.addEventListener('click', async function(){
+          const lines = getLines();
+          if(lines.length === 0) return;
+          const ok = await copyText(lines.join('\\n'));
+          const prev = copyAllBtn.textContent;
+          copyAllBtn.textContent = ok ? 'Copied' : 'Copy';
+          setTimeout(()=> copyAllBtn.textContent = prev, 1200);
+        });
+      }
+
+      chips.forEach(ch => {
+        ch.addEventListener('click', async function(){
+          const idx = Number(this.getAttribute('data-line'));
+          const lines = getLines();
+          if(!lines[idx]) return;
+          const ok = await copyText(lines[idx]);
+          const old = this.textContent;
+          this.textContent = ok ? 'Copied' : old;
+          setTimeout(()=> this.textContent = old, 1000);
+        });
+      });
+
+      // Prevent accidental form submissions if placed inside a form
+      widget.addEventListener('submit', function(e){ e.preventDefault(); });
+
+    })();
+  </script>
+</div>
+<!-- END: IVD Note + Hashtags -->
+	  
+  <p id="help" onclick="window.open('https://wa.me/qr/PEOX7ABHO7TLI1', '_blank')">Having issues? Contact Here</p>
  
  </div>
   <script src="script.js"></script>
@@ -188,3 +319,4 @@
 <script src="https://kit.fontawesome.com/4e1f2e9f6f.js" crossorigin="anonymous"></script>
 </body>
 </html>
+
