@@ -1,0 +1,34 @@
+
+#warning {
+  color: red;
+  display: none;
+  margin-top: 10px;
+}
+#preview {
+  margin-top: 20px;
+  max-width: 300px;
+  max-height: 300px;
+  border: 1px solid #ddd;
+}
+#download {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #e91e63, #9c27b0);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+}
+footer {
+  margin-top: 40px;
+  font-size: 12px;
+  text-align: center;
+}
+#help {
+  margin-top: 20px;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
